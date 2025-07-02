@@ -1,0 +1,511 @@
+:root {
+    /*<!----color-background: #1e1e1e;-->*/
+    --color-text: #e0e0e0;
+    --color-theme: #171717; /* Original theme color, will be adjusted for transparency below */
+    --color-link: #07f1ca;
+    --color-link-active: #015383;
+    --color-secondary: #4a4a4a;
+    --color-secondary-text: #07f1ca;
+    --color-background-alt: #252525;
+    --color-accent-bg: #012429;
+    --color-user-message-text: #ffffff;
+    --color-assistant-message-text: #e0e0e0;
+    --input-bg: #333333;
+    --input-border: #555555;
+    --input-text: var(--color-text);
+    --button-primary-bg: var(--color-link);
+    --button-primary-text: #000f9a;
+    --button-primary-hover-bg: #04c29e; /* New: Slightly darker shade of --color-link for hover */
+    --button-disabled-bg: #013d39;
+    --button-disabled-text: #888888;
+    --color-error: #e57373;
+    --color-error-bg: #4e3434;
+    --color-error-text-on-bg: #ffcdd2;
+}
+label[for="chat-history-display"] { padding-left: 10px; }
+html { background-color: var(--color-background); }
+body {
+    font-family: sans-serif; line-height: 1.6; margin: 0;
+    /* MODIFIED: Removed background-color to allow video to show through */
+    /* background-color: var(--color-background); */
+    color: var(--color-text);
+    /* Removed background-image */
+    min-height: 100vh;
+    position: relative; /* Needed for absolute positioning of video */
+}
+
+/* --- New Video Background Styles --- */
+#video-background {
+    position: fixed; /* Fixes the video to the viewport */
+    right: 0;
+    bottom: 0;
+    width: 100%; /* Changed from min-width */
+    height: 100%; /* Changed from min-height */
+    /* Removed width: auto; height: auto; as 100% handles it */
+    z-index: -100; /* Puts the video behind all other content */
+    background-size: cover; /* Ensures video covers the area */
+    overflow: hidden; /* Hides parts of the video that exceed the bounds */
+    /* TROUBLESHOOTING: Removed brightness filter to ensure visibility */
+    /* filter: brightness(0.4); */
+    object-fit: cover; /* CHANGED: Use 'cover' to make it fill the window and crop if needed */
+    /* Add max-width/max-height to ensure it scales down */
+    max-width: 100vw;
+    max-height: 100vh;
+}
+/* --- End Video Background Styles --- */
+
+header, main {
+    max-width: 800px; /* REVERTED: Changed max-width back to 800px */
+    /* REVERTED: Changed margin back to push content to the right */
+    margin: 20px 5% 20px auto; /* Reverted to original margin */
+    padding: 20px;
+    /* MODIFIED: Adjusted background-color to a balanced transparency */
+    background-color: rgba(23, 23, 23, 0.5); /* 50% opaque to show video through */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(3, 163, 115, 0.596);
+    position: relative; /* Ensures content is above the video */
+    z-index: 1; /* Ensures content is above video */
+}
+header { padding: 2px 20px; }
+h1 {
+    text-align: center; color: #ffffff;
+    font-family: 'VT323', monospace, sans-serif;
+    text-shadow: 0 0 5px rgba(60, 0, 255, 0.448);
+    font-size: 2.0rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+form > div:not(.form-row-columns):not(.input-actions):not(.text-input-area):not(#image-preview-container):not(.tab-content), details { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--color-link); }
+/* Unified styling for text, number, url, and file inputs */
+input[type="text"],
+input[type="number"],
+input[type="url"],
+input[type="file"], /* Added file input here for consistent base styling */
+textarea,
+select {
+    width: 100%; padding: 8px; box-sizing: border-box;
+    background-color: var(--input-bg); color: var(--input-text);
+    border: 1px solid var(--input-border); border-radius: 4px;
+}
+textarea { min-height: 60px; }
+select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat; background-position: right .7em top 50%;
+    background-size: .65em auto; -webkit-appearance: none; -moz-appearance: none; appearance: none;
+}
+input[type="range"] { width: calc(100% - 4em); padding: 0; vertical-align: middle; }
+input[type="range"] + span {
+    display: inline-block; min-width: 3em; text-align: right;
+    vertical-align: middle; margin-left: 5px; color: var(--color-secondary-text);
+}
+details {
+    border: 1px solid var(--color-secondary); border-radius: 4px;
+    padding: 10px; background-color: var(--input-bg);
+}
+summary { font-weight: bold; cursor: pointer; color: var(--color-link); }
+details > div:not(.nested-details) {
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-secondary);
+    margin-bottom: 0;
+}
+details details { border-width: 0; padding: 5px 0 0 15px; } /* Nested details styling */
+details details summary { font-size: 0.9em; }
+details details > div { padding-top: 5px; margin-top: 5px;}
+button {
+    display: inline-block;
+    width: auto;
+    padding: 10px 15px;
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text); border: none; cursor: pointer; font-size: 1em;
+    border-radius: 4px; transition: background-color 0.2s ease; margin-top: 10px;
+    margin-right: 10px;
+}
+button#generate-button { width: calc(100% - 0px); }
+button#simli_stop_button { width: 140px; background-color: var(--color-error-bg); color: var(--color-error-text-on-bg); display: none;}
+button.tab-button {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    margin-right: 5px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid transparent;
+    padding: 8px 15px;
+    border-radius: 4px 4px 0 0;
+}
+button.tab-button.active {
+    background-color: var(--color-theme);
+    border-bottom: 2px solid var(--color-link);
+    color: var(--color-link);
+}
+
+button:hover:not(:disabled) { background-color: var(--button-primary-hover-bg); }
+button:disabled {
+    background-color: var(--button-disabled-bg);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+}
+#legacy-audio-player { display: block; width: 100%; margin-top: 5px; }
+footer { text-align: center; margin-top: 5px; padding-bottom:20px; font-size: 0.9em; color: var(--color-secondary-text); }
+
+.input-actions { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+.input-actions textarea { flex-grow: 1; margin: 0; }
+input[type="number"]#llm_max_tokens_input { width: 100px; }
+
+.form-row-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Adjusted gap */
+    margin-bottom: 15px;
+}
+.form-row-columns > div {
+    flex: 1;
+    min-width: 165px; /* Adjusted min-width, tweak as needed */
+    margin-bottom: 0;
+}
+.form-row-columns select { width: 100%; }
+
+#app-form {
+    background-color: var(--input-bg);
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px 0px rgba(7, 241, 202, 0.25);
+}
+
+/* New container for avatar and buttons */
+#avatar-carousel-container {
+    display: flex; /* Use flexbox for horizontal layout */
+    align-items: center; /* Vertically center items */
+    justify-content: center; /* Horizontally center items */
+    gap: 10px; /* Space between items */
+    margin: 0 auto 20px auto; /* Center the whole carousel */
+    width: fit-content; /* Adjust width to content */
+}
+
+#simli-media-container {
+    position: relative;
+    min-height: 400px;
+    width: 400px;    
+    display: block !important;
+    flex-shrink: 0; /* Prevent it from shrinking in flex container */
+}
+#simli-video-element,
+#exp-lipsync-video,
+#simli-placeholder-video {
+    width: 400px;
+    height: 400px;
+    border: 2px solid var(--color-link);
+    background-color: #101010;
+    border-radius: 8px;
+    object-fit: cover;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(7, 241, 202, 0.3);
+    position: absolute; /* Keep absolute for stacking */
+    top: 0;
+    left: 0;
+}
+#simli-video-element { z-index: 2; border: 4px solid lime; } /* Simli active */
+#exp-lipsync-video { z-index: 1; display: none; } /* Non-Simli talking */
+#simli-placeholder-video { z-index: 1; display: block; } /* Default idle */
+
+#simli-audio-element { display: none; }
+
+/* Style for avatar navigation buttons */
+.avatar-nav-button {
+    background-color: var(--color-secondary);
+    color: var(--color-link);
+    border: 1px solid var(--input-border);
+    border-radius: 50%; /* Make them round */
+    width: 40px; /* Fixed size */
+    height: 40px;
+    font-size: 1.5em; /* Large arrow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+.avatar-nav-button:hover {
+    background-color: var(--color-link);
+    color: var(--button-primary-text);
+}
+.avatar-nav-button:disabled {
+    background-color: var(--button-disabled-bg);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+}
+
+
+/* Styles for the overall status display section */
+#simli-status-display {
+    margin-top: 20px;
+    background-color: var(--input-bg); /* Use input background color */
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(7, 241, 202, 0.1);
+}
+#simli-status-display h3 {
+    margin-top: 0;
+    color: var(--color-link);
+    font-size: 1.1em;
+    margin-bottom: 10px; /* Spacing below headings */
+}
+
+/* New styles for individual status lines */
+#simli-status-display .status-line { /* Each line is a flex container */
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    align-items: baseline; /* Align text baselines */
+    margin-bottom: 8px; /* Spacing between status lines */
+    font-size: 0.95em;
+    color: var(--color-text);
+}
+#simli-status-display .status-line:last-of-type {
+    margin-bottom: 0; /* No margin after the last status line */
+}
+#simli-status-display .status-line .status-label {
+    font-weight: bold;
+    color: var(--color-link); /* Highlight labels */
+    min-width: 160px; /* Give labels a consistent width for alignment */
+    text-align: right;
+    padding-right: 10px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+#simli-status-display .status-line span { /* Target spans for the dynamic values */
+    color: var(--color-secondary-text); /* Specific color for state values */
+    flex-grow: 1; /* Allow the value to take remaining space */
+    word-break: break-all; /* Break long words */
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 170px); /* Adjust width to fit remaining space, account for label min-width + padding-right */
+}
+
+/* Styles for the main log text area */
+#simli-log {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #111;
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-top: 10px; /* Spacing above log area */
+    margin-bottom: 20px; /* Spacing below log area */
+    border-radius: 4px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5); /* Inner shadow for depth */
+    /* New styles for resizable */
+    resize: vertical;
+    min-height: 100px;
+    max-height: 70vh; /* Similar to chat history for consistency */
+}
+
+/* Styles for the SDP preformatted text areas */
+#simli-status-display pre {
+    max-height: 150px; /* Allow more height for SDPs */
+    overflow-y: auto;
+    font-size: 0.75em; /* Slightly smaller font for dense SDP text */
+    background-color: #2a2a2a; /* Slightly lighter background for pre */
+    color: #b0b0b0; /* Lighter text for pre */
+    border: 1px solid #555;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 15px; /* Space after each SDP block */
+}
+#simli-status-display pre:last-of-type {
+    margin-bottom: 0; /* No margin after the very last pre block */
+}
+
+.hidden { display: none !important; }
+.button-group { display: flex; justify-content: flex-start; }
+
+#chat-history-display {
+    height: 160px;
+    border: 1px solid var(--color-secondary);
+    padding: 15px;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    /* MODIFIED: Adjusted background-color to a balanced transparency */
+    background-color: rgba(23, 23, 23, 0.5); /* 50% opaque to show video through */
+    border-radius: 8px;
+    box-shadow: 0 0 15px 0px rgba(7, 241, 202, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    resize: vertical;
+    min-height: 150px;
+    max-height: 70vh;
+}
+.chat-message {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 80%;    
+    word-wrap: break-word;
+    line-height: 1.6;    
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.chat-message .message-content-wrapper > div:first-of-type {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.chat-message strong {
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+.message-content-wrapper > div:last-of-type {
+    font-size: 0.95em;
+}
+.user-message {
+    background-color: var(--color-accent-bg);
+    color: var(--color-user-message-text, #ffffff);
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+}
+.user-message strong {
+    color: var(--color-secondary-text, #07f1ca);
+}
+.assistant-message {
+    background-color: var(--input-bg);
+    color: var(--color-assistant-message-text, #e0e0e0);
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+}
+.assistant-message strong {
+    color: var(--color-link);
+}
+#chat-history-display::-webkit-scrollbar { width: 8px; }
+#chat-history-display::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
+#chat-history-display::-webkit-scrollbar-thumb { background-color: var(--color-secondary); border-radius: 4px; }
+#chat-history-display::-webkit-scrollbar-thumb:hover { background-color: var(--color-link); }
+
+.text-input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.text-input-area textarea {
+    flex-grow: 1;
+}
+#mic-button, #upload-image-button {
+    padding: 8px 12px;
+    font-size: 1em;    
+    line-height: 1.5;    
+    height: auto;      
+    cursor: pointer;
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    min-width: 40px;
+    text-align: center;
+    margin-top: 0;
+    margin-left: 0px;
+}
+#mic-button {
+     min-width: 90px;
+}
+#upload-image-button {
+    margin-left: 0;
+}
+#mic-button.recording {
+    background-color: var(--color-error);
+    color: white;
+    border-color: var(--color-error);
+}
+#mic-button.processing {
+    background-color: orange;
+    color: black;
+}
+#stt-status {
+    font-size: 0.85em;
+    color: var(--color-secondary-text);
+    margin-left: 5px;
+    min-height: 1.2em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Styles for the new Voice Cloner tab */
+#voice-cloner-tab .voice-cloner-output {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    background-color: var(--input-bg);
+}
+#voice-cloner-tab .voice-cloner-output p {
+    margin-bottom: 0;
+    color: var(--color-text);
+}
+#voice-cloner-tab .voice-cloner-output .success {
+    color: var(--color-link);
+}
+#voice-cloner-tab .voice-cloner-output .error {
+    color: var(--color-error);
+}
+
+/* Specific styling for the file input button to match other buttons/inputs */
+input[type="file"]::-webkit-file-upload-button, /* For WebKit browsers (Chrome, Safari) */
+input[type="file"]::file-selector-button { /* Standard property */
+    background-color: var(--color-secondary); /* Match other buttons */
+    color: var(--color-text); /* Match other buttons */
+    border: 1px solid var(--input-border); /* Match other inputs */
+    border-radius: 4px; /* Match other inputs */
+    padding: 8px 12px; /* Consistent padding */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 10px; /* Space between button and file name */
+    /* Remove default styles */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover,
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--color-link); /* Hover effect */
+    color: var(--button-primary-text);
+}
+
+/* New styles for Voice Cloner tab to match Background Video tab */
+#voice-cloner-tab form > div {
+    margin-bottom: 15px; /* Consistent spacing for form elements */
+}
+
+#voice-cloner-tab .button-group {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 10px; /* Space below the button group */
+}
+
+#voice-cloner-tab button {
+    background-color: var(--color-link); /* Primary button color */
+    color: var(--button-primary-text); /* Text color for primary buttons */
+    margin-top: 0; /* Remove extra top margin */
+    margin-right: 0; /* Remove extra right margin */
+}
+
+#voice-cloner-tab button:hover:not(:disabled) {
+    background-color: var(--button-primary-hover-bg); /* Hover effect */
+}
+
+#voice-cloner-tab #cloner-status-message {
+    margin-top: 10px; /* Adjust margin to match other status messages */
+}
+
+/* Adjusted box-shadow for the voice cloner content container */
+#voice-cloner-tab > div {
+    box-shadow: 0 4px 10px rgba(3, 163, 115, 0.2); /* Reduced opacity for a softer glow */
+}

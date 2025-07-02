@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/favicon.ico" type="image/ico">
+    <title>Voice & Text AI App (Unified with Voice Cloner)</title>
+    <!-- MODIFIED: Changed to local path for offline support -->
+    <!--
+        ACTION REQUIRED FOR OFFLINE SUPPORT:
+        Go to https://cdnjs.cloudflare.com/ajax/libs/mvp.css/1.6.0/mvp.min.css in your browser
+        and save the content of that page as 'mvp.min.css' into your project's '/static/' directory.
+    -->
+    <link rel="stylesheet" href="/static/mvp.min.css">
+    <link rel="stylesheet" href="/static/style.css"> <!-- Link to external CSS file -->
+</head>
+<body>
+    <!-- Video Background Element -->
+    <video autoplay mute loop id="video-background" playsinline>
+        <!-- The default source can be kept or removed; it will be overridden by the input URL -->
+        <source src="static\mp4\coffeeshop3background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header><h1>Local Chatterbox-tts</h1></header>
+    <main>
+        <!-- New Carousel Container for Avatar and Nav Buttons -->
+        <div id="avatar-carousel-container">
+            <button class="avatar-nav-button" id="prev-avatar">◀</button>
+            <div id="simli-media-container">
+                <video id="exp-lipsync-video"
+                        src="static\mp4\bot4.mp4"
+                        width="400" height="400" playsinline
+                        style="position: absolute; top: 0; left: 0; z-index: 1;
+                               border: 3px solid var(--color-link); border-radius: 8px;
+                               background-color: #101010; object-fit: cover; display: none;">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="simli-placeholder-video"
+                        src="static\mp4\bot4.mp4"  autoplay loop muted playsinline
+                        width="400" height="400"
+                        style="position: absolute; top: 0; left: 0; z-index: 1;
+                               border: 3px solid var(--color-link); border-radius: 8px;
+                               background-color: #101010; object-fit: cover; display: block;">
+                    Your browser does not support the video tag.
+                </video>
+                <video id="simli-video-element"
+                        autoplay muted playsinline width="400" height="400"
+                        style="position: absolute; top: 0; left: 0; z-index: 2;
+                               border: 3px solid lime; border-radius: 8px;
+                               background-color: transparent; object-fit: cover; display: none;">
+                </video>
+                <audio id="simli-audio-element" autoplay style="display: none;"></audio>
+            </div>
+            <button class="avatar-nav-button" id="next-avatar">▶</button>
+        </div>
+
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="chat-tab">Chat</button>
+            <button class="tab-button" data-tab="voice-cloner-tab">Voice Cloning</button>
+            <button class="tab-button" data-tab="background-video-tab">Background Video</button>
+            <button class="tab-button" data-tab="advanced-settings-tab">Advanced Settings</button>
+            <button class="tab-button" data-tab="system-prompt-tab">System Prompt</button>
+            <button class="tab-button" data-tab="logs-tab">Logs</button>
+        </div>
+
+        <!-- Tab Content Containers -->
+        <div id="chat-tab" class="tab-content">
+            <form id="app-form">
+                <div>
+                    <label for="text_input">Your Message: <span id="stt-status"></span></label>
+                    <div class="text-input-area">
+                        <textarea id="text_input" rows="3" placeholder="Enter text, or use mic/spacebar for PTT..."></textarea>
+                        <button type="button" id="upload-image-button" title="Upload Image">📸</button>
+                        <button type="button" id="mic-button">🎤 Mic</button>
+                    </div>
+                    <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+
+                    <div id="image-preview-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; margin-bottom: 10px;">
+                    </div>
+                </div>
+
+                <audio id="legacy-audio-player" controls style="display:none; width: 100%;"></audio>
+                
+                <label for="chat-history-display">Conversation:</label>
+                <div id="chat-history-display"></div>
+
+                <div class="button-group">
+                    <button type="submit" id="generate-button">Generate</button>
+                    <button type="button" id="simli_stop_button">Stop Simli</button>
+                </div>
+
+                <div class="form-row-columns">
+                    <div>
+                        <label for="mode_select">Mode:</label>
+                        <select id="mode_select">
+                            <option value="tts_only">TTS Only</option>
+                            <option value="llm_only">LLM Only</option>
+                            <option value="llm_tts" selected>LLM + TTS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tts_voice_dd">Voice:</label> <select id="tts_voice_dd"></select>
+                    </div>
+                    <div>
+                        <label for="enable_thinking_select">Share Thinking Log?</label> <select id="enable_thinking_select">
+                            <option value="true">Enabled (per model)</option>
+                            <option value="false" selected>Disabled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="avatar_select">Avatar:</label> <select id="avatar_select">
+                            <option value="true">Yes</option>
+                            <option value="false" selected>No</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Background Video Tab Content -->
+        <div id="background-video-tab" class="tab-content hidden">
+            <h2>🎥 Background Video Controls</h2>
+            <div style="margin-bottom: 20px; padding: 15px; background-color: var(--input-bg); border-radius: 8px; border: 1px solid var(--color-secondary);">
+                <label for="backgroundVideoUrl">Background Video URL (HTTPS or relative path):</label>
+                <input type="url" id="backgroundVideoUrl" placeholder="e.g., https://example.com/your_video.mp4 or static/my_video.mp4">
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <button type="button" id="loadBackgroundVideoButton">
+                        Load Background Video
+                    </button>
+                    <button type="button" id="toggleBackgroundVideoButton">
+                        Pause Background Video
+                    </button>
+                    <button type="button" id="chooseLocalBackgroundVideoButton">
+                        Choose Local Video File
+                    </button>
+                    <input type="file" id="localBackgroundVideoInput" accept="video/*" style="display: none;">
+                </div>
+
+                <p id="backgroundVideoStatus"></p>
+                
+                <div>
+                    <label for="backgroundVideoVolume">Background Video Volume:</label>
+                    <input type="range" id="backgroundVideoVolume" min="0" max="1" step="0.01" value="0.2">
+                    <span id="backgroundVideoVolumeValue">0.20</span>
+                </div>
+            </div>
+        </div>
+        <!-- END Background Video Tab Content -->
+
+        <div id="voice-cloner-tab" class="tab-content hidden">
+            <h2>🎶 Voice Cloner</h2>
+            <p>Upload a WAV audio file (e.g., 10-30 seconds of clean speech) and give your new voice a name. This will save a <code>.pt</code> voice embedding file to the <code>voices/</code> directory. After creation, the new voice will automatically appear in the Chat Interface's voice dropdown.</p>
+            <div style="margin-bottom: 20px; padding: 15px; background-color: var(--input-bg); border-radius: 8px; border: 1px solid var(--color-secondary);">
+                <form id="voice-cloner-form">
+                    <div>
+                        <label for="cloner_input_wav">Upload Reference WAV Audio:</label>
+                        <input type="file" id="cloner_input_wav" accept="audio/wav" required>
+                    </div>
+                    <div>
+                        <label for="cloner_output_name">New Voice Name (e.g., 'MyCustomVoice'):</label>
+                        <input type="text" id="cloner_output_name" placeholder="Enter a unique name for your new voice" required>
+                    </div>
+                    <div class="button-group"> <!-- Added button-group div -->
+                        <button type="submit" id="create-voice-button">Create Voice (.pt) 🎶</button>
+                    </div>
+                    <p id="cloner-status-message" class="voice-cloner-output"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="logs-tab" class="tab-content hidden">
+            <h2>Backend Logs</h2>
+            <p>Real-time log output from the backend server.</p>
+            <pre id="simli-log"></pre>
+            <!-- Removed the problematic WebRTC status display from here -->
+        </div>
+        
+        <!-- Advanced Settings Tab Content -->
+        <div id="advanced-settings-tab" class="tab-content hidden">
+            <h2>⚙️ Advanced Settings</h2>
+            <p>Fine-tune parameters for TTS and LLM models.</p>
+            <details>
+                <summary>TTS Settings</summary>
+                <div class="nested-details">
+                    <details> <!-- NEW: Hints dropdown for TTS Settings -->
+                        <summary>Hints: The 3 Levers of TTS Personality</summary>
+                        <div style="padding: 10px; background-color: #2a2a2a; border-radius: 4px; margin-top: 5px;">
+                            <h3>The 3 Levers of TTS Personality:</h3>
+                            <p><strong>Exaggeration (<code>tts_top_p_slider</code>):</strong> This is the most important setting for controlling the emotional intensity. It directly tells the model how much "emotion" to try and inject.</p>
+                            <ul>
+                                <li><strong>High Value (e.g., 0.9):</strong> Results in a very expressive, almost theatrical voice. This is why the default was "overly enthusiastic."</li>
+                                <li><strong>Low Value (e.g., 0.1):</strong> Results in a much flatter, more neutral, and professional tone.</li>
+                                <li><strong>What we learned:</strong> To get a professional voice, this should be the first slider you lower.</li>
+                            </ul>
+                            <p><strong>CFG (Guidance) (<code>tts_rep_penalty_slider</code>):</strong> This stands for Classifier-Free Guidance. Think of it as how strictly the model should follow the "Exaggeration" instruction.</p>
+                            <ul>
+                                <li><strong>High Value (e.g., 1.1):</strong> The model will try very hard to match the emotion level set by the Exaggeration slider.</li>
+                                <li><strong>Low Value (e.g., 0.2):</strong> The model has more freedom to ignore the emotional instruction, which generally pushes it toward a more standard, neutral delivery.</li>
+                                <li><strong>What we learned:</strong> After lowering Exaggeration, you can lower CFG to further reduce any remaining emotional artifacts and stabilize the voice.</li>
+                            </ul>
+                            <p><strong>Temperature (<code>tts_temp_slider</code>):</strong> This controls the randomness of the model's output.</p>
+                            <ul>
+                                <li><strong>High Value (e.g., 0.9):</strong> More randomness, which can lead to more varied intonation, but can also sound less stable or even slightly garbled.</li>
+                                <li><strong>Low Value (e.g., 0.6):</strong> Less randomness, leading to a more consistent, predictable, and sometimes more monotonous voice.</li>
+                                <li><strong>What we learned:</strong> This is a fine-tuning control. If the voice sounds a bit unstable or "sing-songy" even with low exaggeration, lowering the temperature can make it more grounded.</li>
+                            </ul>
+                            <h3>How They Work Together:</h3>
+                            <p>For a professional, calm voice: Start with a very low Exaggeration (e.g., 0.1-0.2) and a low CFG (e.g., 0.2-0.4). Then, adjust Temperature slightly (e.g., 0.6-0.8) to find a balance between clarity and naturalness.</p>
+                            <p>The new Speed slider is separate: It only affects the pace of the speech after the personality has been determined. It's for adjusting how fast or slow the generated audio is played, without changing the pitch.</p>
+                        </div>
+                    </details>
+                    <div>
+                        <label for="tts_temp_slider">TTS Temp:</label>
+                        <input type="range" id="tts_temp_slider" min="0.1" max="1.5" step="0.01" value="1.0">
+                        <span id="tts_temp_value">1.0</span>
+                    </div>
+                    <div>
+                        <label for="tts_top_p_slider">TTS Exaggeration:</label>
+                        <input type="range" id="tts_top_p_slider" min="0.0" max="1.5" step="0.01" value="0.4">
+                        <span id="tts_top_p_value">0.40</span>
+                    </div>
+                    <div>
+                        <label for="tts_rep_penalty_slider">TTS CFG (Guidance):</label>
+                        <input type="range" id="tts_rep_penalty_slider" min="0.0" max="1.5" step="0.01" value="1.0">
+                        <span id="tts_rep_penalty_value">1.0</span>
+                    </div>
+                    <div>
+                        <label for="tts_speed_slider">TTS Speed:</label>
+                        <input type="range" id="tts_speed_slider" min="0.5" max="1.5" step="0.05" value="1.00">
+                        <span id="tts_speed_value">1.00</span>
+                    </div>
+                    <div>
+                        <label for="streaming_chunk_size_slider">Streaming Chunk Size:</label>
+                        <input type="range" id="streaming_chunk_size_slider" min="5" max="50" step="1" value="17">
+                        <span id="streaming_chunk_size_value">17</span>
+                    </div>
+                    <div>
+                        <label for="context_window_slider">Context Window:</label>
+                        <input type="range" id="context_window_slider" min="50" max="500" step="10" value="50">
+                        <span id="context_window_value">50</span>
+                    </div>
+                    <div>
+                        <label for="fade_duration_slider">Fade Duration (s):</label>
+                        <input type="range" id="fade_duration_slider" min="0.0" max="0.9" step="0.01" value="0.03">
+                        <span id="fade_duration_value">0.03</span>
+                    </div>
+                    <div>
+                        <label for="trim_start_ms_slider">Trim Start (ms):</label>
+                        <input type="range" id="trim_start_ms_slider" min="0" max="200" step="1" value="25">
+                        <span id="trim_start_ms_value">25</span>
+                    </div>
+                </div>
+            </details>
+            <details>
+                <summary>LLM Settings</summary>
+                <div class="nested-details">
+                    <div>
+                        <label for="llm_temp_slider">LLM Temp:</label>
+                        <input type="range" id="llm_temp_slider" min="0.1" max="1.5" step="0.01" value="0.7">
+                        <span id="llm_temp_value">0.70</span>
+                    </div>
+                    <div>
+                        <label for="llm_top_p_slider">LLM Top P:</label>
+                        <input type="range" id="llm_top_p_slider" min="0.1" max="1.0" step="0.01" value="0.9">
+                        <span id="llm_top_p_value">0.90</span>
+                    </div>
+                    <div>
+                        <label for="llm_rep_penalty_slider">LLM Rep Penalty:</label>
+                        <input type="range" id="llm_rep_penalty_slider" min="1.0" max="1.5" step="0.01" value="1.1">
+                        <span id="llm_rep_penalty_value">1.10</span>
+                    </div>
+                    <div>
+                        <label for="llm_top_k_slider">LLM Top K:</label>
+                        <input type="range" id="llm_top_k_slider" min="1" max="100" step="1" value="40">
+                        <span id="llm_top_k_value">40</span>
+                    </div>
+                </div>
+            </details>
+        </div>
+        <!-- END NEW -->
+        
+        <!-- NEW: System Prompt Tab Content -->
+        <div id="system-prompt-tab" class="tab-content hidden">
+            <h2>📝 Custom System Prompt</h2>
+            <div style="margin-bottom: 20px; padding: 15px; background-color: var(--input-bg); border-radius: 8px; border: 1px solid var(--color-secondary);">
+                <label for="systemPromptInput">Enter your custom system prompt here:</label>
+                <textarea id="systemPromptInput" rows="8" placeholder="e.g., You are a helpful assistant."></textarea>
+                <p style="font-size: 0.9em; color: var(--color-secondary-text); margin-top: 10px;">
+                    This prompt will override the default system prompt for the LLM.
+                </p>
+            </div>
+        </div>
+        <!-- END NEW -->
+
+    </main>
+    <script src="/static/simli_webrtc.js"></script>
+    <script src="/static/script_full.js"></script> <!-- MODIFIED: Link to script_full.js -->
+</body>
+</html>

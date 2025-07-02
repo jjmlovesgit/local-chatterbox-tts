@@ -1,0 +1,35 @@
+[project]
+name = "chatterbox-streaming"
+version = "0.1.2"
+description = "Chatterbox Streaming: Open Source TTS and Voice Conversion"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+    {name = "TBD", email = "TBD"}
+]
+dependencies = [
+    "numpy~=1.26.0",
+    "resampy==0.4.3",
+    "librosa==0.10.0",
+    "s3tokenizer",
+    "torch==2.6.0",
+    "torchaudio==2.6.0",
+    "transformers==4.46.3",
+    "diffusers==0.29.0",
+    "resemble-perth==1.0.1",
+    "omegaconf==2.3.0",
+    "conformer==0.3.2",
+    "sounddevice==0.5.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/davidbrowne17/chatterbox-streaming"
+Repository = "https://github.com/davidbrowne17/chatterbox-streaming"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
