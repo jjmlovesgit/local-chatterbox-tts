@@ -145,9 +145,9 @@ tiktoken==0.9.0
 tokenizers==0.20.3
 toml==0.10.2
 tomlkit==0.12.0
-#torch==2.8.0 -- use ones specific to your OS
-#torchaudio==2.8.0.   -- use ones specific to your OS
-#torchvision==0.23.0.+cu128   -- use ones specific to your OS
+#torch==2.3.1 -- use ones specific to your OS
+#torchaudio==2.3.1   -- use ones specific to your OS
+#torchvision==0.18.0.+cu121   -- use ones specific to your OS
 tornado==6.4.2
 tqdm==4.67.1
 transformers==4.46.3
