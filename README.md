@@ -64,7 +64,7 @@ Before you begin, ensure you have the following installed:
 First, clone this GitHub repository to your local machine. Replace `your-repository-url` with the actual URL if this is not the public `chatterboxstreaming` repository.
 
 ```bash
-git clone [https://github.com/jjmlovesgit/local-chatterbox-tts.git](https://github.com/jjmlovesgit/local-chatterbox-tts.git)
+git clone https://github.com/jjmlovesgit/local-chatterbox-tts.git
 cd local-chatterbox-tts
 ```
 
