@@ -98,11 +98,8 @@ pip install -r requirements.txt
 This command will install all the necessary libraries, including `fastapi`, `uvicorn`, `whisper`, `pydub`, `librosa`, and others your application depends on.
 
 **Important Considerations for `torch`, `torchaudio`, and `torchvision`:**
-Your `requirements.txt` may contain specific development/nightly builds of `torch`, `torchaudio`, and `torchvision` (e.g., `torch==2.8.0.dev20250612+cu128`). These versions have important caveats:
 
-* **Development Builds:** They are pre-release development versions and may be unstable, contain bugs, or introduce breaking changes.
 * **CUDA Specificity:** They are compiled for a *very specific* CUDA toolkit version (`cu128` typically implies CUDA 12.x, likely CUDA 12.1 or 12.2). Your local NVIDIA GPU drivers and CUDA toolkit installation must match this version exactly for GPU acceleration to work. Mismatches are a common cause of "CUDA out of memory" or "CUDA not available" errors.
-* **Availability:** These exact nightly builds may not be available indefinitely from PyTorch's nightly index, making future installations difficult or impossible.
 
 **Recommendation:**
 To avoid potential conflicts and ensure a more stable setup, it is strongly recommended that you **remove the `torch`, `torchaudio`, and `torchvision` lines from your `requirements.txt` file.**
