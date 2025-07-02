@@ -61,10 +61,10 @@ Before you begin, ensure you have the following installed:
 
 ### Step 1: Clone the Repository
 
-First, clone this GitHub repository to your local machine. Replace `your-repository-url` with the actual URL if this is not the public `chatterboxstreaming` repository.
+First, clone this GitHub repository to your local machine:
 
 ```bash
-git clone https://github.com/jjmlovesgit/local-chatterbox-tts.git
+git clone [https://github.com/jjmlovesgit/local-chatterbox-tts.git](https://github.com/jjmlovesgit/local-chatterbox-tts.git)
 cd local-chatterbox-tts
 ```
 
@@ -95,7 +95,7 @@ With your virtual environment activated, install all the required Python package
 pip install -r requirements.txt
 ```
 
-This command will install all the necessary libraries, including `fastapi`, `uvicorn`, `whisper`, `chatterbox`, `pydub`, `librosa`, and others your application depends on.
+This command will install all the necessary libraries, including `fastapi`, `uvicorn`, `whisper`, `pydub`, `librosa`, and others your application depends on.
 
 **Important Considerations for `torch`, `torchaudio`, and `torchvision`:**
 Your `requirements.txt` may contain specific development/nightly builds of `torch`, `torchaudio`, and `torchvision` (e.g., `torch==2.8.0.dev20250612+cu128`). These versions have important caveats:
@@ -181,7 +181,7 @@ After running the command, you will see output in your terminal similar to this:
 
 ```
 INFO:     Will watch for changes in these directories: ['C:\\Projects\\chatterboxstreaming']
-INFO:     Uvicorn running on [http://172.0.0.1:8000](http://172.0.0.1:8000) (Press CTRL+C to quit)
+INFO:     Uvicorn running on [http://127.0.0.1:8000](http://127.0.0.1:8000) (Press CTRL+C to quit)
 INFO:     Started reloader process [XXXX] using StatReload
 ...
 INFO:     Application startup complete.
