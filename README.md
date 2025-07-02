@@ -68,8 +68,6 @@ git clone https://github.com/jjmlovesgit/local-chatterbox-tts.git
 cd local-chatterbox-tts
 ```
 
-*(If this is a local project not yet pushed to GitHub, you would skip `git clone` and just `cd` into your project directory.)*
-
 ### Step 2: Set Up Python Environment
 
 It's highly recommended to use a virtual environment to manage dependencies and avoid conflicts with other Python projects.
