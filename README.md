@@ -1,4 +1,5 @@
 # Local Chatterbox-TTS (Unified Voice AI Server)
+![image](https://github.com/user-attachments/assets/0006e264-0789-4f3f-ac18-3eebf7dac665)
 
 This repository hosts a FastAPI web application that integrates a Local Large Language Model (LLM), Text-to-Speech (TTS) using Chatterbox, Speech-to-Text (STT) using Whisper, and real-time avatar interaction via Simli.ai. It provides a comprehensive solution for interactive AI conversations, with a user-friendly web interface.
 
