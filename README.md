@@ -121,39 +121,11 @@ Create a `.env` file in the root of your project directory (the same level as `m
 ```
 # Simli.ai API Configuration (Required for Simli avatar functionality)
 SIMLI_API_KEY="YOUR_SIMLI_API_KEY_HERE"
-SIMLI_FACE_ID="YOUR_SIMLI_FACE_ID_HERE" # e.g., "d1c0199e-310b-44ec-b873-10e3020612ac" (Example ID, replace with yours)
+SIMLI_FACE_ID="YOUR_SIMLI_FACE_ID_HERE" # e.g., "d1c0199e" (Example ID, replace with yours)
 
 # LLM Backend Configuration
 # Choose "LM_STUDIO" or "OLLAMA"
 LLM_BACKEND="LM_STUDIO"
-LMSTUDIO_SERVER_BASE_URL="[http://127.0.0.1:1234](http://127.0.0.1:1234)" # Default for LM Studio
-LMSTUDIO_MODEL="dolphin3.0-llama3.1-8b-abliterated" # Your LM Studio model name
-
-# If using Ollama:
-# LLM_BACKEND="OLLAMA"
-# OLLAMA_SERVER_BASE_URL="[http://127.0.0.1:11434](http://127.0.0.1:11434)" # Default for Ollama
-# OLLAMA_MODEL_NAME="deepseek-r1:latest" # Your Ollama model name
-
-# Custom System Prompt (Optional)
-# LLM_SYSTEM_PROMPT="You are a helpful assistant."
-
-# Whisper STT Model (smaller models are faster, larger are more accurate)
-WHISPER_MODEL_NAME="base.en" # Options: tiny.en, base.en, small.en, medium.en, large-v2, large-v3
-
-# Chatterbox TTS Parameters (Defaults are set in main.py, override here if needed)
-# DEFAULT_CHATTERBOX_TEMP="1.0"
-# DEFAULT_CHATTERBOX_EXAGGERATION="0.25"
-# DEFAULT_CHATTERBOX_CFG="1.1"
-# DEFAULT_CHATTERBOX_SPEED="1.0"
-
-# Audio Processing Parameters
-# ENABLE_AUDIO_FILTERING="False" # Set to "True" to enable a low-pass filter for TTS audio
-# FILTER_CUTOFF_HZ="10000" # Cutoff for low-pass filter
-# FFMPEG_PATH="ffmpeg" # Path to ffmpeg executable if not in system PATH
-
-# Server Host and Port
-# HOST="0.0.0.0"
-# PORT="8000"
 ```
 
 **Obtaining Simli.ai API Key and Face ID:**
